@@ -1,5 +1,6 @@
-"""Select platform for Zowiebox integration."""
-from __future__ import annotations
+"""
+Select platform for Zowiebox integration.
+"""
 
 import logging
 from typing import Any
@@ -8,23 +9,32 @@ from homeassistant.components.select import SelectEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .const import DOMAIN, MANUFACTURER
+from .const import DOMAIN
+from .coordinator import ZowieboxDataUpdateCoordinator
+from .stream_manager import ZowieboxStreamSelect
+from .decoder_controls import ZowieboxResolutionSelect, ZowieboxCodecSelect
 
 _LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_entry(
     hass: HomeAssistant,
-    entry: ConfigEntry,
+    config_entry: ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
-    """Set up Zowiebox select entities based on a config entry."""
-    coordinator = hass.data[DOMAIN][entry.entry_id]
+    """Set up Zowiebox select entities from a config entry."""
+    coordinator: ZowieboxDataUpdateCoordinator = hass.data[DOMAIN][config_entry.entry_id]
 
-    # Import camera control entities
-    from .camera_control import async_setup_entry as async_setup_camera_control
-    
-    # Set up camera control entities (which include select entities)
-    await async_setup_camera_control(hass, entry, async_add_entities)
+    entities = []
+
+    # Add stream selection entity
+    entities.append(ZowieboxStreamSelect(coordinator))
+
+    # Add resolution and codec selectors for each stream
+    if coordinator.data and "streams" in coordinator.data:
+        for stream_id, stream_data in coordinator.data["streams"].items():
+            entities.append(ZowieboxResolutionSelect(coordinator, stream_id))
+            entities.append(ZowieboxCodecSelect(coordinator, stream_id))
+
+    async_add_entities(entities)
