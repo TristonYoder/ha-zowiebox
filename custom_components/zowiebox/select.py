@@ -14,6 +14,11 @@ from .const import DOMAIN
 from .coordinator import ZowieboxDataUpdateCoordinator
 from .stream_manager import ZowieboxStreamSelect
 from .decoder_controls import ZowieboxResolutionSelect, ZowieboxCodecSelect
+from .mode_aware_entities import (
+    ZowieboxModeAwareStreamSelect, 
+    ZowieboxModeAwareResolutionSelect, 
+    ZowieboxModeAwareCodecSelect
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -28,7 +33,12 @@ async def async_setup_entry(
 
     entities = []
 
-    # Add stream selection entity
+    # Add mode-aware entities (these will show/hide based on device mode)
+    entities.append(ZowieboxModeAwareStreamSelect(coordinator))
+    entities.append(ZowieboxModeAwareResolutionSelect(coordinator))
+    entities.append(ZowieboxModeAwareCodecSelect(coordinator))
+
+    # Add legacy entities for backward compatibility
     entities.append(ZowieboxStreamSelect(coordinator))
 
     # Add resolution and codec selectors for each stream

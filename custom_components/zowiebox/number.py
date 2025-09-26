@@ -13,6 +13,10 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .const import DOMAIN
 from .coordinator import ZowieboxDataUpdateCoordinator
 from .decoder_controls import ZowieboxBitrateNumber, ZowieboxFramerateNumber
+from .mode_aware_entities import (
+    ZowieboxModeAwareBitrateNumber, 
+    ZowieboxModeAwareFramerateNumber
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -27,7 +31,11 @@ async def async_setup_entry(
 
     entities = []
 
-    # Add bitrate and framerate controls for each stream
+    # Add mode-aware entities (these will show/hide based on device mode)
+    entities.append(ZowieboxModeAwareBitrateNumber(coordinator))
+    entities.append(ZowieboxModeAwareFramerateNumber(coordinator))
+
+    # Add legacy entities for backward compatibility
     if coordinator.data and "streams" in coordinator.data:
         for stream_id, stream_data in coordinator.data["streams"].items():
             entities.append(ZowieboxBitrateNumber(coordinator, stream_id))
