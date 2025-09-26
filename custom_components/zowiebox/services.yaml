@@ -1,0 +1,25 @@
+# Services for Zowiebox integration
+
+# Example service to control a device directly
+control_device:
+  name: Control Device
+  description: Send a control command to a Zowiebox device
+  fields:
+    device_id:
+      name: Device ID
+      description: The ID of the device to control
+      required: true
+      selector:
+        text:
+    command:
+      name: Command
+      description: The command to send (e.g., turn_on, turn_off, set_brightness)
+      required: true
+      selector:
+        text:
+    value:
+      name: Value
+      description: Optional value for the command (e.g., brightness level)
+      required: false
+      selector:
+        object:

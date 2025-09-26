@@ -1,0 +1,9 @@
+{
+  "name": "Zowiebox",
+  "content_in_root": false,
+  "filename": "zowiebox",
+  "country": ["US", "CA", "GB", "DE", "FR", "ES", "IT", "NL", "BE", "CH", "AT", "AU", "NZ"],
+  "homeassistant": "2023.1.0",
+  "render_readme": true,
+  "iot_class": "Local Polling"
+}

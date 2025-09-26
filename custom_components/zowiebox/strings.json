@@ -1,0 +1,22 @@
+{
+  "title": "Zowiebox",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Zowiebox Setup",
+        "description": "Configure your Zowiebox device connection",
+        "data": {
+          "host": "Host",
+          "port": "Port"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Unable to connect to Zowietek device",
+      "unknown": "Unexpected error occurred"
+    },
+    "abort": {
+      "already_configured": "Device is already configured"
+    }
+  }
+}

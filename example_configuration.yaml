@@ -1,0 +1,193 @@
+# Example Home Assistant configuration for Zowietek integration
+# This file shows how to configure the integration through YAML (alternative to UI)
+
+zowiebox:
+  host: "192.168.1.100"
+  port: 80
+
+# Example automations using Zowietek camera controls
+automation:
+  - alias: "Start recording when motion detected"
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.motion_sensor
+        to: "on"
+    action:
+      - service: switch.turn_on
+        entity_id: switch.zowietek_studio_camera_recording
+      - service: select.select_option
+        entity_id: select.zowietek_studio_camera_tally_color
+        data:
+          option: "red"
+
+  - alias: "Stop recording when no motion"
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.motion_sensor
+        to: "off"
+        for:
+          minutes: 5
+    action:
+      - service: switch.turn_off
+        entity_id: switch.zowietek_studio_camera_recording
+      - service: select.select_option
+        entity_id: select.zowietek_studio_camera_tally_color
+        data:
+          option: "off"
+
+  - alias: "Auto focus when camera moves"
+    trigger:
+      - platform: state
+        entity_id: number.zowietek_studio_camera_pan
+      - platform: state
+        entity_id: number.zowietek_studio_camera_tilt
+    action:
+      - service: number.set_value
+        entity_id: number.zowietek_studio_camera_focus
+        data:
+          value: 50
+
+# Example scripts for camera control
+script:
+  zowietek_studio_setup:
+    alias: "Zowietek Studio Setup"
+    sequence:
+      # Reset camera to center position
+      - service: number.set_value
+        entity_id: number.zowietek_studio_camera_pan
+        data:
+          value: 0
+      - service: number.set_value
+        entity_id: number.zowietek_studio_camera_tilt
+        data:
+          value: 0
+      - service: number.set_value
+        entity_id: number.zowietek_studio_camera_zoom
+        data:
+          value: 1.0
+      
+      # Set exposure for studio lighting
+      - service: select.select_option
+        entity_id: select.zowietek_studio_camera_exposure_mode
+        data:
+          option: "manual"
+      - service: number.set_value
+        entity_id: number.zowietek_studio_camera_gain
+        data:
+          value: 40
+      - service: number.set_value
+        entity_id: number.zowietek_studio_camera_shutter
+        data:
+          value: 120
+      
+      # Set white balance for studio
+      - service: select.select_option
+        entity_id: select.zowietek_studio_camera_white_balance_mode
+        data:
+          option: "daylight"
+      - service: number.set_value
+        entity_id: number.zowietek_studio_camera_saturation
+        data:
+          value: 60
+      
+      # Enable audio
+      - service: switch.turn_on
+        entity_id: switch.zowietek_studio_camera_audio
+      - service: number.set_value
+        entity_id: number.zowietek_studio_camera_audio_volume
+        data:
+          value: 75
+
+  zowietek_recording_start:
+    alias: "Start Zowietek Recording"
+    sequence:
+      - service: switch.turn_on
+        entity_id: switch.zowietek_studio_camera_recording
+      - service: select.select_option
+        entity_id: select.zowietek_studio_camera_tally_color
+        data:
+          option: "red"
+      - service: select.select_option
+        entity_id: select.zowietek_studio_camera_tally_mode
+        data:
+          option: "manual"
+
+  zowietek_recording_stop:
+    alias: "Stop Zowietek Recording"
+    sequence:
+      - service: switch.turn_off
+        entity_id: switch.zowietek_studio_camera_recording
+      - service: select.select_option
+        entity_id: select.zowietek_studio_camera_tally_color
+        data:
+          option: "off"
+
+  zowietek_preset_wide:
+    alias: "Zowietek Wide Shot"
+    sequence:
+      - service: number.set_value
+        entity_id: number.zowietek_studio_camera_pan
+        data:
+          value: 0
+      - service: number.set_value
+        entity_id: number.zowietek_studio_camera_tilt
+        data:
+          value: -10
+      - service: number.set_value
+        entity_id: number.zowietek_studio_camera_zoom
+        data:
+          value: 0.5
+
+  zowietek_preset_close:
+    alias: "Zowietek Close-up Shot"
+    sequence:
+      - service: number.set_value
+        entity_id: number.zowietek_studio_camera_pan
+        data:
+          value: 0
+      - service: number.set_value
+        entity_id: number.zowietek_studio_camera_tilt
+        data:
+          value: 0
+      - service: number.set_value
+        entity_id: number.zowietek_studio_camera_zoom
+        data:
+          value: 3.0
+
+# Example dashboard cards for camera control
+# Add these to your dashboard configuration
+dashboard_cards:
+  - type: entities
+    title: "Zowietek Studio Camera"
+    entities:
+      - camera.zowietek_studio_camera
+      - switch.zowietek_studio_camera_recording
+      - switch.zowietek_studio_camera_audio
+      - select.zowietek_studio_camera_tally_color
+      - select.zowietek_studio_camera_tally_mode
+
+  - type: entities
+    title: "Camera Controls"
+    entities:
+      - number.zowietek_studio_camera_pan
+      - number.zowietek_studio_camera_tilt
+      - number.zowietek_studio_camera_zoom
+      - number.zowietek_studio_camera_focus
+      - number.zowietek_studio_camera_focus_speed
+
+  - type: entities
+    title: "Exposure Controls"
+    entities:
+      - select.zowietek_studio_camera_exposure_mode
+      - number.zowietek_studio_camera_gain
+      - number.zowietek_studio_camera_shutter
+      - select.zowietek_studio_camera_white_balance_mode
+      - number.zowietek_studio_camera_saturation
+
+  - type: entities
+    title: "Image Controls"
+    entities:
+      - number.zowietek_studio_camera_brightness
+      - number.zowietek_studio_camera_contrast
+      - number.zowietek_studio_camera_sharpness
+      - number.zowietek_studio_camera_audio_volume
