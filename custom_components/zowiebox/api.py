@@ -63,15 +63,20 @@ class ZowieboxAPI:
         
         payload = {"group": "all"}
         
+        _LOGGER.info("Making API request to: %s", url)
+        _LOGGER.info("Request payload: %s", payload)
+        
         try:
             async with session.post(url, json=payload) as response:
+                _LOGGER.info("HTTP response status: %s", response.status)
                 response.raise_for_status()
                 data = await response.json()
-                _LOGGER.debug("Status response: %s", data)
+                _LOGGER.info("API response: %s", data)
                 return data
         except Exception as err:
             _LOGGER.error("Failed to get status from %s: %s", url, err)
-            return {"status": "00000", "rsp": "error", "error": str(err)}
+            # Return a proper error response that the config flow can handle
+            return {"status": "00003", "rsp": "error", "error": str(err)}
 
     async def async_get_devices(self) -> list[dict[str, Any]]:
         """Get list of devices - ZowieTek doesn't have a traditional device list."""

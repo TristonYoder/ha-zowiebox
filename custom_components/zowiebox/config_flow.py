@@ -39,7 +39,11 @@ async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str,
     
     try:
         # Test the ZowieTek API using the correct endpoint structure
+        _LOGGER.info("Testing connection to ZowieTek device at %s:%s", host, port)
         status = await api.async_get_status()
+        
+        _LOGGER.info("API response status: %s", status.get("status"))
+        _LOGGER.info("API response rsp: %s", status.get("rsp"))
         
         if status.get("status") == "00000":
             _LOGGER.info("Successfully connected to ZowieTek device at %s:%s", host, port)
@@ -47,6 +51,7 @@ async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str,
         else:
             error_msg = status.get("rsp", "Unknown error")
             _LOGGER.error("ZowieTek API error: %s", error_msg)
+            _LOGGER.error("Full response: %s", status)
             raise CannotConnect(f"API error: {error_msg}")
         
     except aiohttp.ClientError as err:
