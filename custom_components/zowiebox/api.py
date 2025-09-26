@@ -479,3 +479,20 @@ class ZowieboxAPI:
         async with session.post(url, json=payload) as response:
             response.raise_for_status()
             return await response.json()
+
+    async def async_get_stream_info(self) -> dict[str, Any]:
+        """Get stream information."""
+        return await self.async_get_info(API_ENDPOINT_STREAM, "all")
+
+    async def async_get_audio_config_info(self) -> dict[str, Any]:
+        """Get audio configuration information."""
+        return await self.async_get_info(API_ENDPOINT_AUDIO, "all")
+
+    async def async_set_output_info(self, stream_id: str, opt: str, data: dict[str, Any]) -> dict[str, Any]:
+        """Set output information for a stream."""
+        return await self.async_post_command(API_ENDPOINT_VIDEO, stream_id, opt, data)
+
+    async def async_publish_stream_info(self, stream_type: str, opt: str, data: dict[str, Any]) -> dict[str, Any]:
+        """Publish stream information."""
+        endpoint = API_ENDPOINT_STREAM if stream_type == "rtsp" else API_ENDPOINT_STREAM
+        return await self.async_post_command(endpoint, stream_type, opt, data)
