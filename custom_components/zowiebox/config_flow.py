@@ -38,12 +38,23 @@ async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str,
     api = ZowieboxAPI(host, port)
     
     try:
-        # Test the connection
-        await api.async_get_status()
+        # Test the ZowieTek API using the correct endpoint structure
+        status = await api.async_get_status()
+        
+        if status.get("status") == "00000":
+            _LOGGER.info("Successfully connected to ZowieTek device at %s:%s", host, port)
+            _LOGGER.debug("Device status: %s", status)
+        else:
+            error_msg = status.get("rsp", "Unknown error")
+            _LOGGER.error("ZowieTek API error: %s", error_msg)
+            raise CannotConnect(f"API error: {error_msg}")
+        
     except aiohttp.ClientError as err:
-        raise CannotConnect from err
+        _LOGGER.error("Network error connecting to %s:%s: %s", host, port, err)
+        raise CannotConnect(f"Network error: {err}")
     except Exception as err:
-        raise CannotConnect from err
+        _LOGGER.error("Error connecting to %s:%s: %s", host, port, err)
+        raise CannotConnect(f"Connection failed: {err}")
 
     # Return info that you want to store in the config entry.
     return {"title": f"Zowietek {host}"}

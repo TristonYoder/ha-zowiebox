@@ -11,10 +11,21 @@ CONF_PORT = "port"
 DEFAULT_PORT = 80
 DEFAULT_TIMEOUT = 10
 
-# API endpoints
-API_ENDPOINT_STATUS = "/api/status"
-API_ENDPOINT_DEVICES = "/api/devices"
-API_ENDPOINT_CONTROL = "/api/control"
+# ZowieTek API endpoints (based on official documentation)
+API_ENDPOINT_VIDEO = "/video"
+API_ENDPOINT_PTZ = "/ptz"
+API_ENDPOINT_AUDIO = "/audio"
+API_ENDPOINT_STREAM = "/stream"
+API_ENDPOINT_STREAMPLAY = "/streamplay"
+API_ENDPOINT_NETWORK = "/network"
+API_ENDPOINT_SYSTEM = "/system"
+API_ENDPOINT_STORAGE = "/storage"
+API_ENDPOINT_RECORD = "/record"
+
+# Common API parameters
+LOGIN_CHECK_FLAG = "login_check_flag=1"
+OPTION_GET = "option=getinfo"
+OPTION_SET = "option=setinfo"
 
 # Zowietek-specific endpoints
 API_ENDPOINT_CAMERA_INFO = "/api/camera/info"

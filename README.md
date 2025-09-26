@@ -243,9 +243,45 @@ Controls tally light settings.
 ## Troubleshooting
 
 ### Connection Issues
-- Verify the IP address and port of your Zowietek hub
-- Check that the hub is accessible from your Home Assistant instance
-- Ensure firewall rules allow communication on the specified port
+
+#### 1. **Test Device Connectivity**
+First, verify your ZowieTek device is accessible:
+
+```bash
+# Test basic connectivity
+curl http://YOUR_DEVICE_IP/
+
+# Test ZowieTek API endpoints (POST requests with JSON)
+curl -X POST http://YOUR_DEVICE_IP/video?option=getinfo&login_check_flag=1 \
+  -H "Content-Type: application/json" \
+  -d '{"group": "all"}'
+
+curl -X POST http://YOUR_DEVICE_IP/ptz?option=getinfo&login_check_flag=1 \
+  -H "Content-Type: application/json" \
+  -d '{"group": "ptz", "opt": "get_ptz_info"}'
+```
+
+#### 2. **Use the Test Script**
+Run the included test script to discover the correct API endpoints:
+
+```bash
+cd /path/to/ha-zowiebox
+python test_connection.py YOUR_DEVICE_IP
+```
+
+This will test multiple common API endpoints and show you which ones work.
+
+#### 3. **Check Network Configuration**
+- **IP Address**: Confirm the IP address is correct
+- **Port**: Verify port 80 is accessible (or try other common ports like 8080, 8000)
+- **Firewall**: Ensure no firewall is blocking HTTP traffic
+- **Network**: Verify Home Assistant can reach the device
+
+#### 4. **Common Issues**
+- **Wrong IP**: Double-check the device's IP address in your router's admin panel
+- **Different Port**: Some devices use port 8080 or 8000 instead of 80
+- **API Endpoints**: The device might use different API paths (e.g., `/api/v1/` instead of `/api/`)
+- **Device Not Ready**: Ensure the Zowietek device is fully booted and ready
 
 ### Device Not Appearing
 - Restart Home Assistant after installation
