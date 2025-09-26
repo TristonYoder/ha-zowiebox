@@ -37,7 +37,7 @@ A Home Assistant integration for Zowiebox devices, providing seamless control an
 1. Open HACS in your Home Assistant instance
 2. Go to "Integrations"
 3. Click the three dots menu and select "Custom repositories"
-4. Add this repository URL: `https://github.com/tyoder/ha-zowiebox`
+4. Add this repository URL: `https://github.com/tristonyoder/ha-zowiebox`
 5. Select "Integration" as the category
 6. Click "Add"
 7. Search for "Zowiebox" and install it
